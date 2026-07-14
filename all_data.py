@@ -17,7 +17,7 @@ conn = psycopg2.connect(
 ) 
 
 start_date = '2022-01-01'
-end_date = datetime.now().date() - timedelta(days=2)
+end_date = datetime.now().date() - timedelta(days=1)
 end_date_str = end_date.strftime('%Y-%m-%d')
 
 start = datetime.strptime(start_date, '%Y-%m-%d').date()
