@@ -14,7 +14,6 @@ filepath = os.path.join(DATA_DIR, filename)
 if os.path.exists(filepath):
     df = pd.read_csv(filepath)
     df['purchase_datetime'] = pd.to_datetime(df['purchase_datetime'])
-    os.remove(filepath)
 
 conn = psycopg2.connect(
     host=DATABASE_CREDS["HOST"],
