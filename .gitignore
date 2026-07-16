@@ -13,3 +13,9 @@ __pycache__/
 .eggs/
 dist/
 build/data/
+<<<<<<< HEAD
+=======
+venv/
+__pycache__/
+*.pyc
+>>>>>>> cfe4d50a427f1e6eab3e64cde5bb1f3cc8b2633b
