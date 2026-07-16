@@ -4,6 +4,10 @@ from datetime import datetime, timedelta
 import os
 from config import *
 import pandas as pd
+import sys
+
+print("=== save_data.py запущен ===")
+sys.stdout.flush()
 
 #вычисляю вчерашнюю дату
 today = datetime.now().date()
@@ -37,3 +41,4 @@ if data:
     df['purchase_time_str'] = hours.astype(str).str.zfill(2) + ':' + minutes.astype(str).str.zfill(2) + ':' + secs.astype(str).str.zfill(2)
 
     df[['client_id', 'gender', 'purchase_datetime', 'purchase_time_str', 'product_id', 'quantity', 'price_per_item', 'discount_per_item', 'total_price']].to_csv(filepath, index=False, encoding='utf-8')
+    print(f"✅ Загружено {len(df)} записей")

@@ -1,9 +1,13 @@
 import os
+import sys
 import pandas as pd
 import psycopg2
 from psycopg2 import sql, extras
 from datetime import datetime, timedelta
 from config import *
+
+print("=== load_to_db.py запущен ===")
+sys.stdout.flush()
 
 yesterday = datetime.now().date() - timedelta(days=1)
 yesterday_str = yesterday.strftime('%Y-%m-%d')
@@ -11,10 +15,17 @@ yesterday_str = yesterday.strftime('%Y-%m-%d')
 filename = f"sales_{yesterday_str}.csv"      
 filepath = os.path.join(DATA_DIR, filename)
 
-if os.path.exists(filepath):
-    df = pd.read_csv(filepath)
-    df['purchase_datetime'] = pd.to_datetime(df['purchase_datetime'])
+# Проверяем, существует ли файл
+if not os.path.exists(filepath):
+    print(f"Файл {filepath} не найден!")
+    sys.exit(1)
 
+# Читаем CSV
+df = pd.read_csv(filepath)
+df['purchase_datetime'] = pd.to_datetime(df['purchase_datetime'])
+print(f"Прочитано {len(df)} записей из {filename}")
+
+# Подключение к БД
 conn = psycopg2.connect(
     host=DATABASE_CREDS["HOST"],
     port=DATABASE_CREDS["PORT"],
@@ -22,6 +33,7 @@ conn = psycopg2.connect(
     user=DATABASE_CREDS["USER"],
     password=DATABASE_CREDS["PASSWORD"]
 )
+
 with conn.cursor() as cur:
     cur.execute("""
         CREATE TABLE IF NOT EXISTS sales_ozon (
@@ -48,6 +60,7 @@ insert_query = """
         product_id, quantity, price_per_item, discount_per_item, total_price
     ) VALUES %s
 """
+
 with conn.cursor() as cur:
     extras.execute_values(
         cur,
@@ -65,5 +78,6 @@ with conn.cursor() as cur:
         ) for r in records]
     )
     conn.commit()
-    
+
+print(f"✅ Загружено {len(records)} записей в БД")
 conn.close()

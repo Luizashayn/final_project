@@ -1,2 +1,6 @@
 shell-init: error retrieving current directory: getcwd: cannot access parent directories: Operation not permitted
 /bin/bash: /Users/luiza/Desktop/final_project/run_all.sh: Operation not permitted
+shell-init: error retrieving current directory: getcwd: cannot access parent directories: Operation not permitted
+/bin/bash: /Users/luiza/Desktop/final_project/run_all.sh: Operation not permitted
+shell-init: error retrieving current directory: getcwd: cannot access parent directories: Operation not permitted
+/bin/bash: /Users/luiza/Desktop/final_project/run_all.sh: Operation not permitted
