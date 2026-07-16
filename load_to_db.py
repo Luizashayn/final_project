@@ -15,16 +15,14 @@ yesterday_str = yesterday.strftime('%Y-%m-%d')
 filename = f"sales_{yesterday_str}.csv"      
 filepath = os.path.join(DATA_DIR, filename)
 
-<<<<<<< HEAD
 # Проверяем, существует ли файл
 if not os.path.exists(filepath):
     print(f"Файл {filepath} не найден!")
     sys.exit(1)
-=======
+
 if os.path.exists(filepath):
     df = pd.read_csv(filepath)
     df['purchase_datetime'] = pd.to_datetime(df['purchase_datetime'])
->>>>>>> cfe4d50a427f1e6eab3e64cde5bb1f3cc8b2633b
 
 # Читаем CSV
 df = pd.read_csv(filepath)
@@ -85,5 +83,5 @@ with conn.cursor() as cur:
     )
     conn.commit()
 
-print(f"✅ Загружено {len(records)} записей в БД")
+print(f"Загружено {len(records)} записей в БД")
 conn.close()
