@@ -7,7 +7,7 @@ from psycopg2 import extras
 from datetime import datetime, timedelta
 from config import *
 
-print("Перезаливка всех данных (с purchase_datetime_full)")
+print("Перезаливка всех данных")
 
 # Подключение к БД
 conn = psycopg2.connect(
@@ -37,11 +37,11 @@ total_loaded = 0
 current_date = start
 first_chunk = True
 
-# 1. ОЧИЩАЕМ СТАРЫЕ ДАННЫЕ (чтобы не было дублей)
+# Очищаем старые данные (чтобы не было дублей)
 with conn.cursor() as cur:
     cur.execute("TRUNCATE TABLE sales_ozon;")
     conn.commit()
-    print("Старые исторические данные удалены")
+    print("🗑️ Старые исторические данные удалены")
 
 while current_date <= end:
     date_str = current_date.strftime('%Y-%m-%d')
@@ -58,32 +58,24 @@ while current_date <= end:
 
             # Преобразуем секунды во время
             sec = df['purchase_time_as_seconds_from_midnight']
-            sec = pd.to_numeric(sec, errors='coerce').fillna(0).astype(int)
             hours = (sec // 3600).astype(int)
             minutes = ((sec % 3600) // 60).astype(int)
             secs = (sec % 60).astype(int)
 
             df['purchase_time_str'] = (
-            hours.astype(str).str.zfill(2) + ':' +
-            minutes.astype(str).str.zfill(2) + ':' +
-            secs.astype(str).str.zfill(2)
-)
-            
-            # 2. СОЗДАЁМ ПОЛНУЮ ДАТУ-ВРЕМЯ
-            df['purchase_datetime'] = pd.to_datetime(df['purchase_datetime'])
-            df['purchase_datetime_full'] = pd.to_datetime(
-                df['purchase_datetime'].astype(str) + ' ' + df['purchase_time_str'],
-                errors='coerce'
+                hours.astype(str).str.zfill(2) + ':' +
+                minutes.astype(str).str.zfill(2) + ':' +
+                secs.astype(str).str.zfill(2)
             )
             
-            # Удаляем строки с ошибками
-            df = df.dropna(subset=['purchase_datetime_full'])
+            # Преобразуем дату
+            df['purchase_datetime'] = pd.to_datetime(df['purchase_datetime'])
             
-            # Оставляю нужные колонки
+            # Оставляю нужные колонки (БЕЗ purchase_datetime_full)
             cols = [
                 'client_id', 'gender', 'purchase_datetime', 'purchase_time_str',
                 'product_id', 'quantity', 'price_per_item', 'discount_per_item',
-                'total_price', 'purchase_datetime_full'
+                'total_price'
             ]
             existing_cols = [c for c in cols if c in df.columns]
             df = df[existing_cols]
@@ -93,21 +85,21 @@ while current_date <= end:
             if first_chunk and len(df) > 0:
                 first_chunk = False
 
-            # 3. ЗАГРУЖАЮ В БД
+            # Загружаю в БД (БЕЗ purchase_datetime_full)
             with conn.cursor() as cur:
                 records = df.to_dict('records')
                 insert_query = """
                     INSERT INTO sales_ozon (
                         client_id, gender, purchase_datetime, purchase_time_str,
                         product_id, quantity, price_per_item, discount_per_item,
-                        total_price, purchase_datetime_full
+                        total_price
                     ) VALUES %s
                 """
                 extras.execute_values(cur, insert_query, [
                     (
                         r['client_id'], r['gender'], r['purchase_datetime'], r['purchase_time_str'],
                         r['product_id'], r['quantity'], r['price_per_item'], r['discount_per_item'],
-                        r['total_price'], r['purchase_datetime_full']
+                        r['total_price']
                     )
                     for r in records
                 ])
@@ -125,4 +117,4 @@ while current_date <= end:
 
 print(f"\nВсего загружено записей: {total_loaded}")
 conn.close()
-print("Подключение к БД закрыто")
+print("🔌 Подключение к БД закрыто")
