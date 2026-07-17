@@ -58,15 +58,15 @@ while current_date <= end:
 
             # Преобразуем секунды во время
             sec = df['purchase_time_as_seconds_from_midnight']
-            hours = (sec // 3600).astype(int)
-            minutes = ((sec % 3600) // 60).astype(int)
-            secs = (sec % 60).astype(int)
 
+            # Заменяем NaN на 0 и преобразуем в int
+            sec = pd.to_numeric(sec, errors='coerce').fillna(0).astype(int)
+            hours = sec // 3600
+            minutes = (sec % 3600) // 60
+            secs = sec % 60
             df['purchase_time_str'] = (
-                hours.astype(str).str.zfill(2) + ':' +
-                minutes.astype(str).str.zfill(2) + ':' +
-                secs.astype(str).str.zfill(2)
-            )
+                hours.astype(str).str.zfill(2) + ':' + minutes.astype(str).str.zfill(2) + ':' + secs.astype(str).str.zfill(2)
+)
             
             # Преобразуем дату
             df['purchase_datetime'] = pd.to_datetime(df['purchase_datetime'])
@@ -117,4 +117,4 @@ while current_date <= end:
 
 print(f"\nВсего загружено записей: {total_loaded}")
 conn.close()
-print("🔌 Подключение к БД закрыто")
+print("Подключение к БД закрыто")
