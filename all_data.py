@@ -7,9 +7,7 @@ from psycopg2 import extras
 from datetime import datetime, timedelta
 from config import *
 
-print("=" * 60)
-print("ПЕРЕЗАЛИВКА ИСТОРИЧЕСКИХ ДАННЫХ (с purchase_datetime_full)")
-print("=" * 60)
+print("Перезаливка всех данных (с purchase_datetime_full)")
 
 # Подключение к БД
 conn = psycopg2.connect(
@@ -60,6 +58,7 @@ while current_date <= end:
 
             # Преобразуем секунды во время
             sec = df['purchase_time_as_seconds_from_midnight']
+            sec = pd.to_numeric(sec, errors='coerce').fillna(0).astype(int)
             hours = (sec // 3600).astype(int)
             minutes = ((sec % 3600) // 60).astype(int)
             secs = (sec % 60).astype(int)
@@ -117,7 +116,7 @@ while current_date <= end:
                 total_loaded += len(records)
                 print(f"Загружено {len(records)} записей")
         else:
-            print(f"   ℹ️ Нет данных за {date_str}")
+            print(f"Нет данных за {date_str}")
     else:
         print(f"Ошибка API: статус {res.status_code}")
     
