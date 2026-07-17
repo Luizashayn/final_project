@@ -41,7 +41,7 @@ first_chunk = True
 with conn.cursor() as cur:
     cur.execute("TRUNCATE TABLE sales_ozon;")
     conn.commit()
-    print("🗑️ Старые исторические данные удалены")
+    print("Старые исторические данные удалены")
 
 while current_date <= end:
     date_str = current_date.strftime('%Y-%m-%d')
@@ -55,27 +55,33 @@ while current_date <= end:
         
         if data:
             df = pd.DataFrame(data)
-
+            
             # Преобразуем секунды во время
             sec = df['purchase_time_as_seconds_from_midnight']
-
-            # Заменяем NaN на 0 и преобразуем в int
             sec = pd.to_numeric(sec, errors='coerce').fillna(0).astype(int)
+
             hours = sec // 3600
             minutes = (sec % 3600) // 60
             secs = sec % 60
+
             df['purchase_time_str'] = (
-                hours.astype(str).str.zfill(2) + ':' + minutes.astype(str).str.zfill(2) + ':' + secs.astype(str).str.zfill(2)
-)
-            
-            # Преобразуем дату
-            df['purchase_datetime'] = pd.to_datetime(df['purchase_datetime'])
-            
-            # Оставляю нужные колонки (БЕЗ purchase_datetime_full)
+            hours.astype(str).str.zfill(2) + ':' +
+            minutes.astype(str).str.zfill(2) + ':' +
+            secs.astype(str).str.zfill(2)
+            )
+
+            # Преобразуем дату (с защитой от ошибок)
+            df['purchase_datetime'] = pd.to_datetime(df['purchase_datetime'], errors='coerce')
+
+            # Удаляем строки с некорректной датой (NaT)
+            df = df.dropna(subset=['purchase_datetime'])
+            print(f"   После очистки: {len(df)} записей")
+
+            # Оставляю нужные колонки
             cols = [
-                'client_id', 'gender', 'purchase_datetime', 'purchase_time_str',
-                'product_id', 'quantity', 'price_per_item', 'discount_per_item',
-                'total_price'
+            'client_id', 'gender', 'purchase_datetime', 'purchase_time_str',
+            'product_id', 'quantity', 'price_per_item', 'discount_per_item',
+            'total_price'
             ]
             existing_cols = [c for c in cols if c in df.columns]
             df = df[existing_cols]
