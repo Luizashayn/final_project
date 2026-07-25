@@ -22,3 +22,4 @@ __pycache__/
 data/
 logs/
 sales_ozon_20260721.csv
+.DS_Store
