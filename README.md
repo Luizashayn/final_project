@@ -61,6 +61,8 @@ crontab -e
 Metabase запускается в Docker:
 docker run -d -p 3001:3001 --name metabase -e JAVA_OPTS="-Xmx512m" metabase/metabase
 
+Ссылка на дашборд: http://194.67.111.19:3001/public/dashboard/18de6a9b-38e1-4ed9-ba4b-8c9192a307d9
+
 ## Исследования на основании данных за 2023 год:
 
 **Оптимизация ассортиментной матрицы**
