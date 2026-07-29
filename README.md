@@ -1,4 +1,4 @@
-## Дипломная работа 
+## Автоматизация сбора и визуализация аналитики маркетплейса
 
 Этот проект представляет собой полноценный пайплайн обработки данных:
 
@@ -6,8 +6,6 @@
 - **Хранение** в PostgreSQL на удалённом сервере
 - **Визуализация** через Metabase (дашборды для оперативного мониторинга)
 - **Аналитика** – два исследовательских кейса по оптимизации ассортимента и LTV клиентов
-
-Проект был выполнен в рамках итоговой работы по аналитике данных.
 
 **Структура проекта**
 ```plaintext
@@ -24,44 +22,56 @@ final_project/
 ```
 ## Установка
 1. Клонировать репозиторий
-
+```bash
 git clone https://github.com/Luizashayn/final_project.git
 cd final_project
+```
 
 2. Создать виртуальное окружение
-
+```bash
 python3 -m venv venv
 source venv/bin/activate
+```
 
 3. Установить зависимости
-
+```bash
 pip install -r requirements.txt
+```
 
 4. Запустить
+```bash
 python start_date.py            # Поиск первой даты с данными
 python all_data.py              # Загрузка исторических данных
 python save_data.py             # Создание csv-файла с данными о продажах за вчера
-python looad_to_db.py           # Загрузка в БД 
+python looad_to_db.py           # Загрузка в БД
+```
 
 5. Использование автоматизации через crontab
    
 Открыть crontab:
+```bash
 crontab -e
-
+```
+```bash
 Создание csv-файла(в 7:00)
 0 7 * * * cd /home/final_project && /home/final_project/venv/bin/python save_da>
 
 Загрузка в БД (в 7:05 каждый день)
 5 7 * * * cd /home/final_project && /home/final_project/venv/bin/python load_to>
-
+```
 Скриншоты процесса автоматизации можно найти в папке "Скриншоты и графики"
 
 6. Визуализация в Metabase
 
 Metabase запускается в Docker:
+```bash
 docker run -d -p 3001:3001 --name metabase -e JAVA_OPTS="-Xmx512m" metabase/metabase
+```
 
-Ссылка на дашборд: http://194.67.111.19:3001/public/dashboard/18de6a9b-38e1-4ed9-ba4b-8c9192a307d9
+Ссылка на дашборд: 
+```bash 
+http://194.67.111.19:3001/public/dashboard/18de6a9b-38e1-4ed9-ba4b-8c9192a307d9
+```
 
 ## Исследования на основании данных за 2023 год:
 
