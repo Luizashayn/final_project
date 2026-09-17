@@ -53,11 +53,11 @@ python looad_to_db.py           # Загрузка в БД
 crontab -e
 ```
 ```bash
-Создание csv-файла(в 7:00)
-0 7 * * * cd /home/final_project && /home/final_project/venv/bin/python save_da>
+# Создание CSV (07:00)
+0 7 * * * cd /opt/myproject && /opt/myproject/venv/bin/python save_data.py >> /opt/myproject/logs/cron_save.log 2>&1
 
-Загрузка в БД (в 7:05 каждый день)
-5 7 * * * cd /home/final_project && /home/final_project/venv/bin/python load_to>
+# Загрузка в БД (07:05)
+5 7 * * * cd /opt/myproject && /opt/myproject/venv/bin/python load_to_db.py >> /opt/myproject/logs/cron_load.log 2>&1
 ```
 Скриншоты процесса автоматизации можно найти в папке [Скриншоты и графики](./скриншоты%20и%20графики)
 
@@ -70,7 +70,7 @@ docker run -d -p 3001:3001 --name metabase -e JAVA_OPTS="-Xmx512m" metabase/meta
 
 Ссылка на дашборд: 
 ```bash 
-http://194.67.111.19:3001/public/dashboard/18de6a9b-38e1-4ed9-ba4b-8c9192a307d9
+http://85.204.240.18:3000/public/dashboard/e12ac367-e3c2-4cac-b60e-f369b103942e
 ```
 
 ## Исследования на основании данных за 2023 год:
